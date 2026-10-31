@@ -1,0 +1,30 @@
+[
+  {
+    "id": "doc_savings",
+    "text": "A savings account is a deposit account that allows customers to store money and earn interest. Banks may apply minimum balance requirements and account-specific fees. Interest rates and fees depend on the account terms."
+  },
+  {
+    "id": "doc_fixed_deposit",
+    "text": "A fixed deposit is an investment where a customer deposits a lump sum for a fixed period at an agreed interest rate. Premature withdrawal may attract a penalty depending on the bank's terms."
+  },
+  {
+    "id": "doc_personal_loan",
+    "text": "A personal loan is an unsecured loan offered to an eligible borrower. Approval and interest rates depend on factors such as income, credit history, repayment capacity, and lender policy."
+  },
+  {
+    "id": "doc_credit_card",
+    "text": "A credit card allows a cardholder to make purchases using a credit limit. The cardholder must repay the amount by the due date. Interest and late payment charges may apply to unpaid balances."
+  },
+  {
+    "id": "doc_kyc",
+    "text": "Know Your Customer (KYC) is a process banks use to verify customer identity. It may require identity and address documents. Requirements vary by jurisdiction and institution."
+  },
+  {
+    "id": "doc_neft",
+    "text": "NEFT is an electronic funds transfer system used to transfer money between bank accounts. Transfer processing and limits are governed by the applicable bank and payment-system rules."
+  },
+  {
+    "id": "doc_imps",
+    "text": "IMPS is an electronic funds transfer service that supports near real-time interbank transfers. Availability, transaction limits, and charges depend on the bank and applicable rules."
+  }
+]
