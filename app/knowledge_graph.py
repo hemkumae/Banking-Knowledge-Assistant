@@ -2,7 +2,7 @@ import networkx as nx
 
 
 class BankingKnowledgeGraph:
-    """Small explicit graph model: entities are nodes; relationships are edges."""
+    """Explicit directed graph: entities are nodes and typed relations are edges."""
 
     def __init__(self):
         self.graph = nx.MultiDiGraph()
@@ -39,21 +39,45 @@ class BankingKnowledgeGraph:
         for source, target, relation in edges:
             self.graph.add_edge(source, target, relation=relation)
 
-    def neighbors(self, entity: str):
+    def entities(self, entity_type=None):
+        """List entities, optionally filtered by their type."""
+        return [
+            {"name": name, "entity_type": data.get("entity_type", "Unknown")}
+            for name, data in self.graph.nodes(data=True)
+            if entity_type is None or data.get("entity_type", "").lower() == entity_type.lower()
+        ]
+
+    def neighbors(self, entity: str, direction="both"):
         if entity not in self.graph:
             return {"entity": entity, "found": False, "relationships": []}
+        if direction not in {"incoming", "outgoing", "both"}:
+            raise ValueError("direction must be incoming, outgoing, or both")
+
         relationships = []
-        for _, target, data in self.graph.out_edges(entity, data=True):
-            relationships.append({"relation": data["relation"], "target": target})
-        for source, _, data in self.graph.in_edges(entity, data=True):
-            relationships.append({"relation": data["relation"], "source": source})
+        if direction in {"outgoing", "both"}:
+            for _, target, data in self.graph.out_edges(entity, data=True):
+                relationships.append({"direction": "outgoing", "source": entity,
+                                       "relation": data["relation"], "target": target})
+        if direction in {"incoming", "both"}:
+            for source, _, data in self.graph.in_edges(entity, data=True):
+                relationships.append({"direction": "incoming", "source": source,
+                                       "relation": data["relation"], "target": entity})
         return {"entity": entity, "found": True, "relationships": relationships}
 
-    def shortest_path(self, source: str, target: str):
+    def relationships(self, relation=None):
+        """Return typed edges, optionally filtered by relation name."""
+        rows = []
+        for source, target, data in self.graph.edges(data=True):
+            if relation is None or data["relation"].lower() == relation.lower():
+                rows.append({"source": source, "relation": data["relation"], "target": target})
+        return rows
+
+    def shortest_path(self, source: str, target: str, directed=True):
         if source not in self.graph or target not in self.graph:
             return {"found": False, "path": []}
+        graph = self.graph if directed else self.graph.to_undirected()
         try:
-            path = nx.shortest_path(self.graph.to_undirected(), source, target)
-            return {"found": True, "path": path}
+            path = nx.shortest_path(graph, source, target)
+            return {"found": True, "path": path, "directed": directed}
         except nx.NetworkXNoPath:
-            return {"found": False, "path": []}
+            return {"found": False, "path": [], "directed": directed}
