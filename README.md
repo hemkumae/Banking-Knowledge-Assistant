@@ -1,53 +1,63 @@
-# Banking Knowledge Assistant: RAG Evaluation + Knowledge Graph
+# Banking Knowledge Assistant
 
-A Python portfolio starter demonstrating embedding-based retrieval, a small banking knowledge graph, retrieval evaluation metrics, and REST APIs.
+A portfolio project demonstrating a small Retrieval-Augmented Generation (RAG) system, a banking knowledge graph, an evaluation harness, and REST APIs. All banking data is illustrative.
 
-## Architecture
-- `data/banking_docs.json` contains illustrative banking documents.
-- Sentence Transformers creates document/query embeddings.
-- FAISS retrieves the most similar documents.
-- The assistant uses retrieved context; an OpenAI API key enables generated answers, otherwise it returns retrieved context.
-- `app/evaluation.py` measures retrieval Precision, Recall, F1, and a simple answer token-overlap F1 baseline.
-- NetworkX stores a small manually seeded graph of banking entities and relationships.
-- FastAPI exposes question-answering and graph query endpoints.
+## Features
+- Sentence Transformers embeddings and FAISS similarity retrieval.
+- Optional OpenAI-generated answers; without an API key, the assistant returns retrieved context.
+- NetworkX directed graph with typed entities and labelled relationships.
+- Golden-dataset retrieval evaluation using Precision, Recall and F1.
+- Optional schema-constrained LLM-as-a-judge for groundedness, relevance and correctness.
+- pytest coverage for metrics, graph operations and API endpoints.
+- GitHub Actions workflow to run tests on pushes and pull requests.
 
 ## Setup
-Use Python 3.10 or 3.11:
+Use Python 3.10 or 3.11.
 
 ```bash
 python -m venv .venv
 source .venv/bin/activate
-# Windows: .venv\\Scripts\\activate
+python -m pip install --upgrade pip
 pip install -r requirements.txt
 cp .env.example .env
 ```
 
-Add an optional `OPENAI_API_KEY` to `.env` to enable generated answers. Never commit `.env` or API keys.
+Add OPENAI_API_KEY to .env only if you want generated answers and model judging. Never commit .env or API keys.
 
-## Run
-
+## Run the API
 ```bash
 uvicorn app.api:app --reload
 ```
+Open http://127.0.0.1:8000/docs.
 
-Open `http://127.0.0.1:8000/docs`.
+Endpoints:
+- GET /health
+- POST /ask
+- GET /graph/entities
+- GET /graph/relationships?relation=OPENS
+- GET /graph/entity/Customer?direction=outgoing
+- GET /graph/path?source=Customer&target=Interest&directed=true
 
-Example request:
-
+## Tests
 ```bash
-curl -X POST http://127.0.0.1:8000/ask \\
-  -H 'Content-Type: application/json' \\
-  -d '{"question":"What is KYC used for?","top_k":3}'
+pytest -q
 ```
 
-Run the evaluation harness with:
-
+## Evaluation
 ```bash
 python -m app.evaluation
 ```
+This writes evaluation_results.json locally. To enable the optional LLM judge:
+```bash
+python -m app.evaluation --llm-judge
+```
+The judge returns grounded (boolean), relevance_score (1-5), correctness_score (1-5), and rationale. These are model judgments, not ground truth, and require human review. The call may incur API costs.
 
-## Evaluation notes
-The golden dataset stores questions, expected answers, and relevant document IDs. Retrieval Precision/Recall/F1 compare retrieved IDs with expected IDs. `answer_token_f1` is only a lexical-overlap baseline, not a measure of factual correctness or faithfulness.
+Precision = relevant retrieved documents / all retrieved documents.
+Recall = relevant retrieved documents / all expected relevant documents.
+F1 = harmonic mean of Precision and Recall.
+
+The answer token F1 is lexical overlap only; it does not prove factual correctness or faithfulness. The LLM judge is fallible and should be checked against human-labelled examples.
 
 ## Limitations
-This is a learning/portfolio baseline, not a production banking system. Documents and graph data are illustrative. It does not yet implement an LLM-as-judge, calibration analysis, automated entity extraction, Ragas/DeepEval, production security, or compliance controls. Do not use real customer data or claim production accuracy.
+Educational portfolio software, not a production banking system. No real customer data, banking integration, regulatory controls, or financial advice. Calibration curves, automated entity extraction, production vector database service, cloud deployment, and a full agent workflow are not implemented yet.
