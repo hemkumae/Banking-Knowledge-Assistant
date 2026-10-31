@@ -1,0 +1,27 @@
+[
+  {
+    "question": "What is a savings account?",
+    "expected_answer": "A deposit account for storing money and earning interest.",
+    "relevant_doc_ids": ["doc_savings"]
+  },
+  {
+    "question": "What can happen if I withdraw a fixed deposit early?",
+    "expected_answer": "A premature withdrawal penalty may apply depending on the bank's terms.",
+    "relevant_doc_ids": ["doc_fixed_deposit"]
+  },
+  {
+    "question": "What affects personal loan approval?",
+    "expected_answer": "Income, credit history, repayment capacity, and lender policy can affect approval.",
+    "relevant_doc_ids": ["doc_personal_loan"]
+  },
+  {
+    "question": "What is KYC used for?",
+    "expected_answer": "KYC is used by banks to verify a customer's identity.",
+    "relevant_doc_ids": ["doc_kyc"]
+  },
+  {
+    "question": "What is the difference between NEFT and IMPS?",
+    "expected_answer": "Both transfer money between bank accounts; IMPS supports near real-time transfers, while NEFT processing follows its applicable processing system.",
+    "relevant_doc_ids": ["doc_neft", "doc_imps"]
+  }
+]
